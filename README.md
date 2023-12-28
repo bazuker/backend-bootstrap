@@ -12,6 +12,11 @@ The database is implemented via `Adapter` interface.
 `Adapter` acts as the controller layer and is used to control the operations on database.
 Currently, [Amazon DynamoDB](https://aws.amazon.com/dynamodb/) is the only implemented adapter.
 
+### DynamoDB setup
+Primary index `id`
+
+Secondary index `email` (name `email-index`)
+
 ## Sessions and cache
 Basic in-memory cache with expiration
 

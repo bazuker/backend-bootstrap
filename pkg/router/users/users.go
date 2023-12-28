@@ -14,9 +14,10 @@ func HandleUsersMe(c *gin.Context) {
 	dbContext := c.MustGet(helper.ContextDatabase)
 	db := dbContext.(database.Adapter)
 
-	user, err := db.GetUserByID(userIDContext.(string))
+	userID := userIDContext.(string)
+	user, err := db.GetUserByID(userID)
 	if err != nil {
-		log.Println("failed to get user by ID:", err)
+		log.Printf("failed to get user by ID '%s': %s\n", userID, err.Error())
 		c.AbortWithStatusJSON(
 			http.StatusInternalServerError,
 			helper.HTTPError{Message: "failed to get user"},

@@ -47,10 +47,11 @@ func HandleAuthGoogleCallback(c *gin.Context) {
 		if err != db.ErrNotFound {
 			// Something went wrong.
 			log.Println("failed to get user by email:", err)
+			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
-		user = &db.User{
+		user = db.User{
 			ID:            uuid.NewString(),
 			FirstName:     googleUser.GivenName,
 			LastName:      googleUser.FamilyName,
@@ -58,11 +59,13 @@ func HandleAuthGoogleCallback(c *gin.Context) {
 			VerifiedEmail: true, // Verified because this is Google SSO.
 		}
 
-		err = database.CreateUser(user)
+		err = database.CreateUser(&user)
 		if err != nil {
 			log.Println("failed to create user:", err)
 			return
 		}
+
+		log.Printf("created a new user with ID '%s'\n", user.ID)
 	}
 
 	sessionCache := c.MustGet(helper.ContextCache).(*cache.Cache)
@@ -97,11 +100,11 @@ func HandleAuthGoogleCallback(c *gin.Context) {
 }
 
 func CheckAuthenticationMiddleware(c *gin.Context) {
-	accessToken := c.GetHeader("AccessToken")
+	accessToken := c.GetHeader("Access-Token")
 	if len(accessToken) == 0 {
 		c.AbortWithStatusJSON(
 			http.StatusUnauthorized,
-			helper.HTTPError{Message: "'AccessToken' header is missing"},
+			helper.HTTPError{Message: "'Access-Token' header is missing"},
 		)
 		return
 	}
@@ -111,7 +114,7 @@ func CheckAuthenticationMiddleware(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(
 			http.StatusForbidden,
-			helper.HTTPError{Message: "No access"},
+			helper.HTTPError{Message: "no access"},
 		)
 		return
 	}
