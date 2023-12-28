@@ -1,14 +1,15 @@
 package router
 
 import (
-	"github.com/akyoto/cache"
-	"github.com/bazuker/backend-bootstrap/pkg/db"
-	"github.com/bazuker/backend-bootstrap/pkg/router/helper"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 
+	"github.com/akyoto/cache"
+	"github.com/bazuker/backend-bootstrap/pkg/db"
 	authHandlers "github.com/bazuker/backend-bootstrap/pkg/router/auth"
+	"github.com/bazuker/backend-bootstrap/pkg/router/helper"
+	usersHandlers "github.com/bazuker/backend-bootstrap/pkg/router/users"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 // Router is a smart HTTP server router that handles requests routing
@@ -57,9 +58,14 @@ func (r *Router) Run() error {
 
 	auth := v1.Group("/auth")
 	// Route to initiate Google authentication.
+	// e.g. https://example.com/api/v1/auth/google
 	auth.Match([]string{http.MethodGet, http.MethodPost}, "/google", authHandlers.HandleAuthGoogleInitiation)
 	// Route to handle Google authentication callback.
 	auth.Match([]string{http.MethodGet, http.MethodPost}, "/google/callback", authHandlers.HandleAuthGoogleCallback)
+
+	users := v1.Group("/users")
+	users.Use(authHandlers.CheckAuthenticationMiddleware)
+	users.GET("/me", usersHandlers.HandleUsersMe)
 
 	return r.gin.Run(r.cfg.Address)
 }
@@ -67,7 +73,8 @@ func (r *Router) Run() error {
 // contextMiddleware sets additional useful context to be used by other handlers.
 func contextMiddleware(adapter db.Adapter, sessionCache *cache.Cache) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set(helper.DatabaseContext, adapter)
-		c.Set(helper.CacheContext, sessionCache)
+		c.Set(helper.ContextDatabase, adapter)
+		c.Set(helper.ContextCache, sessionCache)
+		c.Next()
 	}
 }

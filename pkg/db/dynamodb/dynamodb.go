@@ -27,7 +27,11 @@ func (D DB) UpdateUser(user *db.User) error {
 
 func (D DB) GetUserByID(ID string) (*db.User, error) {
 	//TODO implement me
-	panic("implement me")
+	return &db.User{
+		ID:        ID,
+		FirstName: "Bob",
+		LastName:  "Builder",
+	}, nil
 }
 
 func (D DB) GetUserByEmail(email string) (*db.User, error) {

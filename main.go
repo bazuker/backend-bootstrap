@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/akyoto/cache"
-	"github.com/bazuker/backend-bootstrap/pkg/db/dynamodb"
 	"log"
 	"time"
 
+	"github.com/akyoto/cache"
+	"github.com/bazuker/backend-bootstrap/pkg/db/dynamodb"
 	"github.com/bazuker/backend-bootstrap/pkg/router"
 )
 
