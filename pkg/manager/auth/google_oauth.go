@@ -28,13 +28,12 @@ type GoogleUserInfo struct {
 }
 
 const (
-	redirectURLEnvVar = "BACKEND_BOOTSTRAP_GOOGLE_REDIRECT_URL"
 	oauthGoogleUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
 )
 
 var (
 	googleOauthConfig = &oauth2.Config{
-		RedirectURL:  os.Getenv(redirectURLEnvVar),
+		RedirectURL:  os.Getenv("GOOGLE_OAUTH_REDIRECT_URL"),
 		ClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
 		ClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
 		Scopes: []string{

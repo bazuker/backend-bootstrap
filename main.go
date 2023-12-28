@@ -14,6 +14,16 @@ import (
 func main() {
 	log.Println("Initializing")
 
+	/*
+		Ready for the cloud? Get your environment variables ready!
+		export AWS_REGION=""
+		export AWS_ACCESS_KEY_ID=""
+		export AWS_SECRET_ACCESS_KEY=""
+		export GOOGLE_OAUTH_CLIENT_ID=""
+		export GOOGLE_OAUTH_CLIENT_SECRET=""
+		export GOOGLE_OAUTH_REDIRECT_URL=""
+	*/
+
 	// Initialize AWS stuff.
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
