@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/bazuker/backend-bootstrap/pkg/db/dynamodb"
 	"github.com/bazuker/backend-bootstrap/pkg/fileStore/s3"
-	"github.com/bazuker/backend-bootstrap/pkg/router"
+	"github.com/bazuker/backend-bootstrap/pkg/manager"
 )
 
 func main() {
@@ -27,19 +27,45 @@ func main() {
 		Bucket:     "backend-bootstrap-storage",
 	})
 
-	// Initialize the router.
-	r := router.New(router.Config{
-		Address:             ":9999",
-		MaxUploadFilesizeMB: 16,
-		Cache:               cache.New(time.Minute * 5),
-		DB:                  db,
-		FileStore:           fs,
+	// Initialize the manager.
+	m := manager.New(manager.Config{
+		ServerAddress:             ":9999",
+		ServerMaxUploadFilesizeMB: 16,
+		Cache:                     cache.New(time.Minute * 5),
+		DB:                        db,
+		FileStore:                 fs,
 	})
+
+	/*
+		// Not ready for the cloud yet or just want to test locally?
+		// No problemo!
+		// import localFS "github.com/bazuker/backend-bootstrap/pkg/filestore/local"
+		// import localDB "github.com/bazuker/backend-bootstrap/pkg/db/local"
+		// Initialize the local database and file storage.
+		db, err := localDB.New(localDB.Config{
+			Filename: "localdata/database.json",
+		})
+		if err != nil {
+			log.Println("failed to create local database:", err)
+			return
+		}
+		fs := localFS.New(localFS.Config{
+			Directory: "localdata/",
+		})
+		// Initialize the manager.
+		m := manager.New(manager.Config{
+			ServerAddress:             ":9999",
+			ServerMaxUploadFilesizeMB: 16,
+			Cache:                     cache.New(time.Minute * 5),
+			DB:                        db,
+			FileStore:                 fs,
+		})
+	*/
 
 	log.Println("Running")
 
 	// Start the HTTP server using the router.
-	if err := r.Run(); err != nil {
+	if err := m.Start(); err != nil {
 		log.Fatalln(err)
 	}
 }

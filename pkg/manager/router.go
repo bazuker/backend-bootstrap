@@ -1,32 +1,32 @@
-package router
+package manager
 
 import (
-	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
 	"net/http"
 
 	"github.com/akyoto/cache"
 	"github.com/bazuker/backend-bootstrap/pkg/db"
-	authHandlers "github.com/bazuker/backend-bootstrap/pkg/router/auth"
-	"github.com/bazuker/backend-bootstrap/pkg/router/helper"
-	usersHandlers "github.com/bazuker/backend-bootstrap/pkg/router/users"
+	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
+	authHandlers "github.com/bazuker/backend-bootstrap/pkg/manager/auth"
+	"github.com/bazuker/backend-bootstrap/pkg/manager/helper"
+	usersHandlers "github.com/bazuker/backend-bootstrap/pkg/manager/users"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-// Router is a smart HTTP server router that handles requests routing
+// Manager is a smart HTTP server and router that handles requests routing
 // and provides useful context to handlers.
-type Router struct {
-	gin *gin.Engine
-	cfg Config
+type Manager struct {
+	router *gin.Engine
+	cfg    Config
 }
 
 type Config struct {
-	// HTTP server address
-	Address string
-	// MaxUploadFilesizeMB maximum upload filesize in megabytes.
-	MaxUploadFilesizeMB int64
-	// CORS is cross-origin resource sharing configuration
-	CORS *cors.Config
+	// ServerAddress is server HTTP address
+	ServerAddress string
+	// ServerMaxUploadFilesizeMB maximum upload filesize in megabytes.
+	ServerMaxUploadFilesizeMB int64
+	// ServerCORS is cross-origin resource sharing configuration
+	ServerCORS *cors.Config
 	// DB is a database adapter.
 	DB db.Adapter
 	// Cache is the session cache.
@@ -35,25 +35,25 @@ type Config struct {
 	FileStore fileStore.FileStore
 }
 
-func New(cfg Config) *Router {
-	if cfg.MaxUploadFilesizeMB < 1 {
-		cfg.MaxUploadFilesizeMB = 16
+func New(cfg Config) *Manager {
+	if cfg.ServerMaxUploadFilesizeMB < 1 {
+		cfg.ServerMaxUploadFilesizeMB = 10
 	}
-	if cfg.CORS == nil {
+	if cfg.ServerCORS == nil {
 		corsCfg := cors.DefaultConfig()
 		corsCfg.AllowOrigins = []string{"*"}
 		corsCfg.AllowHeaders = []string{"*"}
-		cfg.CORS = &corsCfg
+		cfg.ServerCORS = &corsCfg
 	}
-	return &Router{gin: gin.Default(), cfg: cfg}
+	return &Manager{router: gin.Default(), cfg: cfg}
 }
 
-func (r *Router) Run() error {
-	r.gin.MaxMultipartMemory = r.cfg.MaxUploadFilesizeMB << 20
+func (r *Manager) Start() error {
+	r.router.MaxMultipartMemory = r.cfg.ServerMaxUploadFilesizeMB << 20
 
-	r.gin.Use(cors.New(*r.cfg.CORS))
+	r.router.Use(cors.New(*r.cfg.ServerCORS))
 
-	api := r.gin.Group("/api")
+	api := r.router.Group("/api")
 	api.Use(contextMiddleware(r.cfg.DB, r.cfg.Cache, r.cfg.FileStore))
 
 	v1 := api.Group("/v1")
@@ -84,7 +84,7 @@ func (r *Router) Run() error {
 	// Users with admin access can get information about any user.
 	users.GET("/:userid", usersHandlers.HandleGetUsers)
 
-	return r.gin.Run(r.cfg.Address)
+	return r.router.Run(r.cfg.ServerAddress)
 }
 
 // contextMiddleware sets additional useful context to be used by other handlers.

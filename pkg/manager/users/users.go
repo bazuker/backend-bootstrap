@@ -11,7 +11,7 @@ import (
 
 	database "github.com/bazuker/backend-bootstrap/pkg/db"
 	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
-	"github.com/bazuker/backend-bootstrap/pkg/router/helper"
+	"github.com/bazuker/backend-bootstrap/pkg/manager/helper"
 	"github.com/gin-gonic/gin"
 )
 

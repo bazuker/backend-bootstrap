@@ -50,11 +50,6 @@ func (d DB) CreateUser(user *db.User) error {
 	return err
 }
 
-func (d DB) UpdateUser(user *db.User) error {
-	//TODO implement me
-	panic("implement me")
-}
-
 func (d DB) UpdateUserPhotoURL(userID, photoURL string) error {
 	_, err := d.db.UpdateItem(&dynamodb.UpdateItemInput{
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{

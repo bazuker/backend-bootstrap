@@ -2,11 +2,12 @@ package s3
 
 import (
 	"bytes"
+	"io"
+	"net/http"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"io"
-	"net/http"
 )
 
 type FileStore struct {
