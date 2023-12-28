@@ -18,7 +18,7 @@ import (
 func HandleAuthGoogleInitiation(c *gin.Context) {
 	redirectURL := c.Query("redirect_url")
 	if len(redirectURL) == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, helper.HTTPError{
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.HTTPMessage{
 			Message: "'redirect_url' is missing in the request",
 		})
 		return
@@ -106,7 +106,7 @@ func CheckAuthenticationMiddleware(c *gin.Context) {
 	if len(accessToken) == 0 {
 		c.AbortWithStatusJSON(
 			http.StatusUnauthorized,
-			helper.HTTPError{Message: "'Access-Token' header is missing"},
+			helper.HTTPMessage{Message: "'Access-Token' header is missing"},
 		)
 		return
 	}
@@ -117,7 +117,7 @@ func CheckAuthenticationMiddleware(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(
 			http.StatusForbidden,
-			helper.HTTPError{Message: "no access"},
+			helper.HTTPMessage{Message: "no access"},
 		)
 		return
 	}

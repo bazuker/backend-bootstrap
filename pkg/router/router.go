@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
 	"net/http"
 
 	"github.com/akyoto/cache"
@@ -30,6 +31,8 @@ type Config struct {
 	DB db.Adapter
 	// Cache is the session cache.
 	Cache *cache.Cache
+	// FileStore is a file storage provider.
+	FileStore fileStore.FileStore
 }
 
 func New(cfg Config) *Router {
@@ -51,7 +54,7 @@ func (r *Router) Run() error {
 	r.gin.Use(cors.New(*r.cfg.CORS))
 
 	api := r.gin.Group("/api")
-	api.Use(contextMiddleware(r.cfg.DB, r.cfg.Cache))
+	api.Use(contextMiddleware(r.cfg.DB, r.cfg.Cache, r.cfg.FileStore))
 
 	v1 := api.Group("/v1")
 
@@ -72,6 +75,10 @@ func (r *Router) Run() error {
 	// Protected route that returns information about the authenticated user.
 	// e.g. https://example.com/api/v1/users/me
 	users.GET("/me", usersHandlers.HandleUsersMe)
+	// Protected route that allows users to upload profile photos.
+	users.POST("/me/photo", usersHandlers.HandleUsersMePhoto)
+	// Protected route that allows users to delete profile photo.
+	users.DELETE("/me/photo", usersHandlers.HandleUsersMeDeletePhoto)
 	// Protected route that returns information about a user.
 	// Users with basic access can only get information about themselves.
 	// Users with admin access can get information about any user.
@@ -81,10 +88,15 @@ func (r *Router) Run() error {
 }
 
 // contextMiddleware sets additional useful context to be used by other handlers.
-func contextMiddleware(adapter db.Adapter, sessionCache *cache.Cache) gin.HandlerFunc {
+func contextMiddleware(
+	adapter db.Adapter,
+	sessionCache *cache.Cache,
+	fileStore fileStore.FileStore,
+) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set(helper.ContextDatabase, adapter)
 		c.Set(helper.ContextCache, sessionCache)
+		c.Set(helper.ContextFileStore, fileStore)
 		c.Next()
 	}
 }

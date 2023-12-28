@@ -11,11 +11,12 @@ import (
 const (
 	ContextDatabase        = "db"
 	ContextCache           = "cache"
+	ContextFileStore       = "fileStore"
 	ContextUserID          = "userID"
 	ContextUserAccessLevel = "userAccessLevel"
 )
 
-type HTTPError struct {
+type HTTPMessage struct {
 	Message string `json:"message"`
 }
 

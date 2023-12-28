@@ -19,6 +19,7 @@ type User struct {
 	DOB           *time.Time `json:"dob"`
 	VerifiedEmail bool       `json:"verifiedEmail"`
 	AccessLevel   string     `json:"accessLevel"`
+	PhotoURL      string     `json:"photoURL"`
 }
 
 var (

@@ -19,16 +19,19 @@ type DB struct {
 }
 
 type Config struct {
+	AWSSession     *session.Session
 	UsersTableName string
 }
 
 func New(cfg Config) *DB {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}))
+	if cfg.AWSSession == nil {
+		cfg.AWSSession = session.Must(session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		}))
+	}
 	return &DB{
 		cfg: cfg,
-		db:  dynamodb.New(sess),
+		db:  dynamodb.New(cfg.AWSSession),
 	}
 }
 
@@ -50,6 +53,25 @@ func (d DB) CreateUser(user *db.User) error {
 func (d DB) UpdateUser(user *db.User) error {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (d DB) UpdateUserPhotoURL(userID, photoURL string) error {
+	_, err := d.db.UpdateItem(&dynamodb.UpdateItemInput{
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":r": {
+				S: aws.String(photoURL),
+			},
+		},
+		TableName: aws.String(d.cfg.UsersTableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"id": {
+				S: aws.String(userID),
+			},
+		},
+		UpdateExpression: aws.String("set photoURL = :r"),
+		ReturnValues:     aws.String("NONE"),
+	})
+	return err
 }
 
 func (d DB) GetUserByID(id string) (db.User, error) {
