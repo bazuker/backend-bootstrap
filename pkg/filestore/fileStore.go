@@ -1,4 +1,4 @@
-package fileStore
+package filestore
 
 type FileStore interface {
 	// GetObject retrieves the object from the file store.

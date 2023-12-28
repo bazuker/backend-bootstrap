@@ -5,7 +5,7 @@ import (
 
 	"github.com/akyoto/cache"
 	"github.com/bazuker/backend-bootstrap/pkg/db"
-	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
+	"github.com/bazuker/backend-bootstrap/pkg/filestore"
 	authHandlers "github.com/bazuker/backend-bootstrap/pkg/manager/auth"
 	"github.com/bazuker/backend-bootstrap/pkg/manager/helper"
 	usersHandlers "github.com/bazuker/backend-bootstrap/pkg/manager/users"
@@ -32,7 +32,7 @@ type Config struct {
 	// Cache is the session cache.
 	Cache *cache.Cache
 	// FileStore is a file storage provider.
-	FileStore fileStore.FileStore
+	FileStore filestore.FileStore
 }
 
 func New(cfg Config) *Manager {
@@ -91,7 +91,7 @@ func (r *Manager) Start() error {
 func contextMiddleware(
 	adapter db.Adapter,
 	sessionCache *cache.Cache,
-	fileStore fileStore.FileStore,
+	fileStore filestore.FileStore,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Set(helper.ContextDatabase, adapter)

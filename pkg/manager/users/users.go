@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	database "github.com/bazuker/backend-bootstrap/pkg/db"
-	"github.com/bazuker/backend-bootstrap/pkg/fileStore"
+	"github.com/bazuker/backend-bootstrap/pkg/filestore"
 	"github.com/bazuker/backend-bootstrap/pkg/manager/helper"
 	"github.com/gin-gonic/gin"
 )
@@ -97,7 +97,7 @@ func HandleUsersMePhoto(c *gin.Context) {
 	userIDContext := c.MustGet(helper.ContextUserID)
 	userID := userIDContext.(string)
 	fileStoreContext := c.MustGet(helper.ContextFileStore)
-	fs := fileStoreContext.(fileStore.FileStore)
+	fs := fileStoreContext.(filestore.FileStore)
 	objectKey := fmt.Sprintf("%s-photo%s", userID, ext)
 	err = fs.PutObject(buf.Bytes(), objectKey)
 	if err != nil {
@@ -155,7 +155,7 @@ func HandleUsersMeDeletePhoto(c *gin.Context) {
 
 	// Delete the photo from the file store.
 	fileStoreContext := c.MustGet(helper.ContextFileStore)
-	fs := fileStoreContext.(fileStore.FileStore)
+	fs := fileStoreContext.(filestore.FileStore)
 	err = fs.DeleteObject(user.PhotoURL)
 	if err != nil {
 		log.Printf("failed to delete user photo '%s': %s\n", user.PhotoURL, err.Error())

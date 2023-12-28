@@ -1,5 +1,10 @@
-# API Server bootstrap
+# API Server Bootstrap
 This is a basic API backend scaffold that can be used to quickly bootstrap your next app. 
+The code of the project is intended to be modified by a developer.
+The sole purpose of this project is to reduce the time spent on creating the boilerplate code.
+
+This project already contains the database, filestore and cache connectors. 
+Also, a few endpoints were implemented to demonstrate the best practices.
 
 ## HTTP router
 

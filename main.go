@@ -7,7 +7,7 @@ import (
 	"github.com/akyoto/cache"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/bazuker/backend-bootstrap/pkg/db/dynamodb"
-	"github.com/bazuker/backend-bootstrap/pkg/fileStore/s3"
+	"github.com/bazuker/backend-bootstrap/pkg/filestore/s3"
 	"github.com/bazuker/backend-bootstrap/pkg/manager"
 )
 

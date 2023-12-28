@@ -28,7 +28,7 @@ type GoogleUserInfo struct {
 }
 
 const (
-	redirectURLEnvVar = "BACKEND_BOOSTRAP_GOOGLE_REDIRECT_URL"
+	redirectURLEnvVar = "BACKEND_BOOTSTRAP_GOOGLE_REDIRECT_URL"
 	oauthGoogleUrlAPI = "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
 )
 
