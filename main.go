@@ -43,6 +43,7 @@ func main() {
 		// import localDB "github.com/bazuker/backend-bootstrap/pkg/db/local"
 		// Initialize the local database and file storage.
 		db, err := localDB.New(localDB.Config{
+			// The directory must already exist. Only the file will be created.
 			Filename: "localdata/database.json",
 		})
 		if err != nil {
@@ -50,6 +51,7 @@ func main() {
 			return
 		}
 		fs := localFS.New(localFS.Config{
+			// The directory must already exist.
 			Directory: "localdata/",
 		})
 		// Initialize the manager.
