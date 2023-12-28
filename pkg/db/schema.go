@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+const (
+	AccessLevelBasic = "basic"
+	AccessLevelAdmin = "admin"
+)
+
 type User struct {
 	ID            string     `json:"id"`
 	FirstName     string     `json:"firstName"`
@@ -13,6 +18,7 @@ type User struct {
 	Phone         string     `json:"phone"`
 	DOB           *time.Time `json:"dob"`
 	VerifiedEmail bool       `json:"verifiedEmail"`
+	AccessLevel   string     `json:"accessLevel"`
 }
 
 var (

@@ -57,6 +57,7 @@ func HandleAuthGoogleCallback(c *gin.Context) {
 			LastName:      googleUser.FamilyName,
 			Email:         googleUser.Email,
 			VerifiedEmail: true, // Verified because this is Google SSO.
+			AccessLevel:   db.AccessLevelBasic,
 		}
 
 		err = database.CreateUser(&user)
@@ -92,7 +93,8 @@ func HandleAuthGoogleCallback(c *gin.Context) {
 	u.RawQuery = query.Encode()
 	// Create a user session.
 	sessionData := helper.SessionData{
-		UserID: user.ID,
+		UserID:      user.ID,
+		AccessLevel: user.AccessLevel,
 	}
 	sessionCache.Set(accessToken, sessionData, time.Hour*24)
 
@@ -109,8 +111,9 @@ func CheckAuthenticationMiddleware(c *gin.Context) {
 		return
 	}
 
+	// Load information about the user from the cache.
 	sessionCache := c.MustGet(helper.ContextCache).(*cache.Cache)
-	sessionData, ok := sessionCache.Get(accessToken)
+	session, ok := sessionCache.Get(accessToken)
 	if !ok {
 		c.AbortWithStatusJSON(
 			http.StatusForbidden,
@@ -118,7 +121,11 @@ func CheckAuthenticationMiddleware(c *gin.Context) {
 		)
 		return
 	}
-	c.Set(helper.ContextUserID, sessionData.(helper.SessionData).UserID)
+	sessionData := session.(helper.SessionData)
+
+	// Store the relevant information in the context for other handlers to use.
+	c.Set(helper.ContextUserID, sessionData.UserID)
+	c.Set(helper.ContextUserAccessLevel, sessionData.AccessLevel)
 
 	c.Next()
 }

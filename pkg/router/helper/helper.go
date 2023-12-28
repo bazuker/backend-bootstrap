@@ -5,10 +5,14 @@ import (
 	"encoding/base64"
 )
 
+// Context keys that can be used to fetch useful information
+// from a request's context.
+// Context availability depends on the middleware called before a handler.
 const (
-	ContextDatabase = "db"
-	ContextCache    = "cache"
-	ContextUserID   = "userID"
+	ContextDatabase        = "db"
+	ContextCache           = "cache"
+	ContextUserID          = "userID"
+	ContextUserAccessLevel = "userAccessLevel"
 )
 
 type HTTPError struct {
@@ -16,7 +20,8 @@ type HTTPError struct {
 }
 
 type SessionData struct {
-	UserID string
+	UserID      string
+	AccessLevel string
 }
 
 func GenerateRandomString(length int) string {

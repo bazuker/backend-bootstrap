@@ -23,6 +23,7 @@ func main() {
 	})
 
 	log.Println("Running")
+
 	// Start the HTTP server using the router.
 	if err := r.Run(); err != nil {
 		log.Fatalln(err)

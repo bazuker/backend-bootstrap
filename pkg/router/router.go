@@ -42,11 +42,10 @@ func New(cfg Config) *Router {
 		corsCfg.AllowHeaders = []string{"*"}
 		cfg.CORS = &corsCfg
 	}
-	return &Router{cfg: cfg}
+	return &Router{gin: gin.Default(), cfg: cfg}
 }
 
 func (r *Router) Run() error {
-	r.gin = gin.Default()
 	r.gin.MaxMultipartMemory = r.cfg.MaxUploadFilesizeMB << 20
 
 	r.gin.Use(cors.New(*r.cfg.CORS))
@@ -56,6 +55,7 @@ func (r *Router) Run() error {
 
 	v1 := api.Group("/v1")
 
+	/* Authentication */
 	auth := v1.Group("/auth")
 	// Route to initiate Google authentication.
 	// e.g. https://example.com/api/v1/auth/google
@@ -63,9 +63,19 @@ func (r *Router) Run() error {
 	// Route to handle Google authentication callback.
 	auth.Match([]string{http.MethodGet, http.MethodPost}, "/google/callback", authHandlers.HandleAuthGoogleCallback)
 
+	/* Users */
 	users := v1.Group("/users")
+	// Authentication check middleware will verify that the user is authentication
+	// i.e. has 'Access-Token' header with a token that exists in the session cache.
+	// and also create 'ContextUserID' for convenience.
 	users.Use(authHandlers.CheckAuthenticationMiddleware)
+	// Protected route that returns information about the authenticated user.
+	// e.g. https://example.com/api/v1/users/me
 	users.GET("/me", usersHandlers.HandleUsersMe)
+	// Protected route that returns information about a user.
+	// Users with basic access can only get information about themselves.
+	// Users with admin access can get information about any user.
+	users.GET("/:userid", usersHandlers.HandleGetUsers)
 
 	return r.gin.Run(r.cfg.Address)
 }
