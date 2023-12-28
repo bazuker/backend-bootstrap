@@ -32,9 +32,9 @@ Basic in-memory cache with expiration is implemented.
 https://github.com/akyoto/cache
 
 ## File storage
-The [Amazon AWS S3](https://aws.amazon.com/s3/) is implemented. See [s3.go](pkg%2FfileStore%2Fs3%2Fs3.go)
+The [Amazon AWS S3](https://aws.amazon.com/s3/) is implemented. See [s3.go](pkg%2Ffilestore%2Fs3%2Fs3.go)
 
-Alternatively, for local tests you can use the filesystem adapter. See [local.go](pkg%2FfileStore%2Flocal%2Flocal.go)
+Alternatively, for local tests you can use the filesystem adapter. See [local.go](pkg%2Ffilestore%2Flocal%2Flocal.go)
 
 ## Authentication 
 Google OAuth 2.0 is conveniently implemented.
